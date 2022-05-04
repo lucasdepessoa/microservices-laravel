@@ -13,9 +13,19 @@ class CommentController extends Controller
     }
     public function store(Request $request)
     {
-        return Comment::create([
+        $comment =  Comment::create([
             'post_id' => $request->input('post_id'),
             'text' => $request->input('text')
         ]);
+
+        $req = \Http::post("http://localhost:8000/api/posts/{$comment->post_id}/comments", [
+            'text' => $comment->text
+        ]);
+
+        if($req->failed()){
+            return 'Request Failed!';
+        }
+
+        return $comment;
     }
 }
